@@ -24,11 +24,17 @@
     TERMS.
 */
 
+#include "Arduino.h"
 #include <RN487x_BLE.h>
 #include <EddystoneBeacon.h>
 
 #define debugSerial SerialUSB
+#if defined(ARDUINO_SODAQ_EXPLORER)
 #define bleSerial Serial1
+#else 
+#define bleSerial Serial
+#endif
+
 #define SERIAL_TIMEOUT  10000
 
 const char* myEddystoneURI = "http://www.microchip.com" ;
@@ -36,7 +42,9 @@ const uint8_t myTxPower = 0xC5 ;
 
 void initLed()
 {
+  #if defined(ARDUINO_SODAQ_EXPLORER)
   pinMode(LED_BUILTIN, OUTPUT) ;
+  #endif
   pinMode(LED_RED, OUTPUT) ;
   pinMode(LED_GREEN, OUTPUT) ;
   pinMode(LED_BLUE, OUTPUT) ;  
@@ -45,12 +53,16 @@ void initLed()
 
 void turnBlueLedOn()
 {
+  #if defined(ARDUINO_SODAQ_EXPLORER)
   digitalWrite(LED_BUILTIN, HIGH) ;
+  #endif
 }
 
 void turnBlueLedOff()
 {
+  #if defined(ARDUINO_SODAQ_EXPLORER)
   digitalWrite(LED_BUILTIN, LOW) ;
+  #endif
 }
 
 #define COMMON_ANODE  // LED driving
@@ -67,20 +79,6 @@ void setRgbColor(uint8_t red, uint8_t green, uint8_t blue)
   analogWrite(LED_BLUE, blue) ;
 }
 
-void initTemperature()
-{
-  pinMode(TEMP_SENSOR, INPUT) ;
-  //Set ADC resolution to 12 bits
-  analogReadResolution(12) ;  
-}
-
-float getTemperature()
-{
-  float mVolts = (float)analogRead(TEMP_SENSOR) * 3300.0 / 1023.0 ;
-  float temp = (mVolts - 500.0) / 100.0 ;
-  return temp ;
-}
-
 void setup()
 {
   while ((!debugSerial) && (millis() < SERIAL_TIMEOUT)) ;
@@ -88,7 +86,6 @@ void setup()
   debugSerial.begin(115200) ;
 
   initLed() ;
-  initTemperature() ;
 
   // Set the optional debug stream
   rn487xBle.setDiag(debugSerial) ;
@@ -134,4 +131,3 @@ void loop()
 { 
 
 }
-

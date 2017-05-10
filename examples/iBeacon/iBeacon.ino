@@ -24,11 +24,17 @@
     TERMS.
 */
 
+#include "Arduino.h"
 #include <RN487x_BLE.h>
 #include <iBeacon.h>
 
 #define debugSerial SerialUSB
+#if defined(ARDUINO_SODAQ_EXPLORER)
 #define bleSerial Serial1
+#else 
+#define bleSerial Serial
+#endif
+
 #define SERIAL_TIMEOUT  10000
 
 const char* myiBeaconUUID = "AD11CF40063F11E5BE3E0002A5D5C51B" ;  // 16bytes
@@ -38,7 +44,9 @@ const uint8_t myTxPower = 0xC5 ;
 
 void initLed()
 {
-  pinMode(LED_BUILTIN, OUTPUT) ;
+  #if defined(ARDUINO_SODAQ_EXPLORER)
+    pinMode(LED_BUILTIN, OUTPUT) ;
+  #endif
   pinMode(LED_RED, OUTPUT) ;
   pinMode(LED_GREEN, OUTPUT) ;
   pinMode(LED_BLUE, OUTPUT) ;  
@@ -47,12 +55,16 @@ void initLed()
 
 void turnBlueLedOn()
 {
-  digitalWrite(LED_BUILTIN, HIGH) ;
+  #if defined(ARDUINO_SODAQ_EXPLORER)
+    digitalWrite(LED_BUILTIN, HIGH) ;
+  #endif
 }
 
 void turnBlueLedOff()
 {
-  digitalWrite(LED_BUILTIN, LOW) ;
+  #if defined(ARDUINO_SODAQ_EXPLORER)
+    digitalWrite(LED_BUILTIN, LOW) ;
+  #endif
 }
 
 #define COMMON_ANODE  // LED driving
@@ -69,20 +81,6 @@ void setRgbColor(uint8_t red, uint8_t green, uint8_t blue)
   analogWrite(LED_BLUE, blue) ;
 }
 
-void initTemperature()
-{
-  pinMode(TEMP_SENSOR, INPUT) ;
-  //Set ADC resolution to 12 bits
-  analogReadResolution(12) ;  
-}
-
-float getTemperature()
-{
-  float mVolts = (float)analogRead(TEMP_SENSOR) * 3300.0 / 1023.0 ;
-  float temp = (mVolts - 500.0) / 100.0 ;
-  return temp ;
-}
-
 void setup()
 {
   while ((!debugSerial) && (millis() < SERIAL_TIMEOUT)) ;
@@ -90,7 +88,6 @@ void setup()
   debugSerial.begin(115200) ;
 
   initLed() ;
-  initTemperature() ;
 
   // Set the optional debug stream
   rn487xBle.setDiag(debugSerial) ;
