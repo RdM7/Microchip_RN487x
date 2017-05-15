@@ -24,7 +24,7 @@
     TERMS.
 */
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include <RN487x_BLE.h>
 #include <EddystoneBeacon.h>
 

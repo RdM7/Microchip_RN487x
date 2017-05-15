@@ -24,7 +24,7 @@
     TERMS.
 */
 
-#include "Arduino.h"
+#include <Arduino.h>
 #include <RN487x_BLE.h>
 
 #define debugSerial SerialUSB
@@ -81,7 +81,7 @@ void setup()
 {
   while ((!debugSerial) && (millis() < SERIAL_TIMEOUT)) ;
   
-	debugSerial.begin(115200) ;
+  debugSerial.begin(115200) ;
 
   initLed() ;
 

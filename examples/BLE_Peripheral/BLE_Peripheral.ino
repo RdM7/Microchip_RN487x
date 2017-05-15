@@ -23,7 +23,7 @@
     MICROCHIP PROVIDES THIS SOFTWARE CONDITIONALLY UPON YOUR ACCEPTANCE OF THESE
     TERMS.
 */
-
+#include <Arduino.h>
 #include <RN487x_BLE.h>
 #include "LIS3DE.h"
 
@@ -159,11 +159,11 @@ void setup()
 {
   while ((!debugSerial) && (millis() < SERIAL_TIMEOUT)) ;
   
-	debugSerial.begin(115200) ;
+  debugSerial.begin(115200) ;
+  
   Wire.begin();
 
   initLed() ;
-
   initTemperature() ;
 
   // Set the optional debug stream
